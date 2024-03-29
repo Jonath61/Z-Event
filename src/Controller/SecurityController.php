@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
@@ -11,7 +12,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Contracts\Service\Attribute\Required;
 
 #[Route('/api', name: 'app_api_')]
 class SecurityController extends AbstractController
@@ -21,27 +21,16 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/register', name: 'register', methods: 'POST')]
-
     #[OA\Post(
-        path: '/api/resister',
-        summary: "Inscription d'un nouveau utilisateur",
+        path: '/api/register',
+        summary: "Inscription d'un nouvel utilisateur",
     )]
-    #[OA\RequestBody(
-        Required: true,
-        description: "Donnée de l'utilisateur à inscrire",
-        content: new OA\JsonContent(
-            type: 'objet'
+    #[OA\Response(
+        response: 200,
+        description: 'Successful response',
+        content: new Model(
+            type: User::class
         )
-    )]
-    #[OA\Property(
-        property: 'email',
-        type: 'string',
-        example: "adresse@email.com"
-    )]
-    #[OA\Property(
-        property: 'password',
-        type: 'string',
-        example: "Mot de passe"
     )]
 
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
@@ -54,12 +43,24 @@ class SecurityController extends AbstractController
         $this->manager->flush();
 
         return new JsonResponse(
-            ['user' => $user-> getUserIdentifier(), 'apiToken' => $user->getApiToken(), 'roles' => $user->getRoles()],
+            ['user' => $user->getUserIdentifier(), 'apiToken' => $user->getApiToken(), 'roles' => $user->getRoles()],
             Response::HTTP_CREATED
         );
     }
 
     #[Route('/login', name: 'login', methods: 'POST')]
+    #[OA\Post(
+        path: '/api/login',
+        summary: "Connecter un utilisateur"
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Successful response',
+        content: new Model(
+            type: User::class
+        )
+    )]
+
     public function login(#[CurrentUser] ?User $user): JsonResponse
     {
         if (null === $user) {
