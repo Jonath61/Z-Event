@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\{Model, Security};
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -23,7 +23,7 @@ class SecurityController extends AbstractController
 
     #[Route('/register', name: 'register', methods: 'POST')]
     /** @OA\(
-     *     path="/api/registration",
+     *     path="/api/register",
      *     summary="Inscription d'un nouvel utilisateur",
      *     @OA\RequestBody(
      *         required=true,
