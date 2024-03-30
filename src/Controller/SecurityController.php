@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\{Model, Security};
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
@@ -12,6 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 #[Route('/api', name: 'app_api_')]
 class SecurityController extends AbstractController
@@ -21,17 +22,6 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/register', name: 'register', methods: 'POST')]
-    #[OA\Post(
-        path: '/api/register',
-        summary: "Inscription d'un nouvel utilisateur",
-    )]
-    #[OA\Response(
-        response: 200,
-        description: 'Successful response',
-        content: new Model(
-            type: User::class
-        )
-    )]
 
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
@@ -49,17 +39,6 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/login', name: 'login', methods: 'POST')]
-    #[OA\Post(
-        path: '/api/login',
-        summary: "Connecter un utilisateur"
-    )]
-    #[OA\Response(
-        response: 200,
-        description: 'Successful response',
-        content: new Model(
-            type: User::class
-        )
-    )]
 
     public function login(#[CurrentUser] ?User $user): JsonResponse
     {
